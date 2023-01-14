@@ -25,16 +25,15 @@ player1.image = pygame.image.load("player1.png")
 player1.image = pygame.transform.scale(player1.image, (50, 50))
 player1.image = pygame.transform.rotate(player1.image, 180)
 player1.rect = pygame.Rect(910, 380, 0, 0)
-x_player1 = 910
-y_player2 = 380
+
 angle = 0
-player2 = pygame.image.load("player2.png")
-player2 = pygame.transform.scale(player2, (50, 50))
-player2_x = 50
-player2_y = 380
+
+player2 = pygame.sprite.Sprite()
+player2.image = pygame.image.load("player2.png")
+player2.image = pygame.transform.scale(player2.image, (50, 50))
+player2.rect = pygame.Rect(50, 380, 0, 0)
 
 clock = pygame.time.Clock()
-angle = 0
 
 while True:
     for event in pygame.event.get():
@@ -52,8 +51,10 @@ while True:
 
     draw_object(screen)
 
-    screen.blit(player2, (50, 380))
+    screen.blit(player2.image, player2.rect)
+
     screen.blit(score_point_player1, score_point_player1_rect)
     screen.blit(score_point_player2, score_point_player2_rect)
+
     pygame.display.flip()
     clock.tick(50)
