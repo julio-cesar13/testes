@@ -93,7 +93,7 @@ while game_loop:
 
     # collision player 1 with objects
     collision_1 = (
-        25 + xp1 + 25 * math.sin(math.radians(ang_left + 90)), yp1 + 25 * math.cos(math.radians(ang_left + 90)), 5,
+        25 + xp1 + 25 * math.cos(math.radians(ang_left)), yp1 + 25 * math.sin(math.radians(ang_left)), 5,
         50)
     if draw_object(screen, collision_1):
         per_1 = True
@@ -111,8 +111,8 @@ while game_loop:
 
     # Move p1
     if keys[pygame.K_w] and per_1:
-        xp1 += math.sin(math.radians(ang_left + 90))
-        yp1 += math.cos(math.radians(ang_left + 90))
+        xp1 += math.cos(math.radians(ang_left))
+        yp1 -= math.sin(math.radians(ang_left))
 
     elif keys[pygame.K_a]:
         ang_left += 1
@@ -122,17 +122,17 @@ while game_loop:
 
     # start player 1 ball
     elif keys[pygame.K_q] and count_balls_left >= 3:
-        ball_x_left = 25 + xp1 + 25 * math.sin(math.radians(ang_left + 90))
-        ball_y_left = 25 + yp1 + 25 * math.cos(math.radians(ang_left + 90))
+        ball_x_left = 25 + xp1 + 25 * math.cos(math.radians(ang_left))
+        ball_y_left = 25 + yp1 - 25 * math.sin(math.radians(ang_left))
         ball_left = pygame.draw.rect(screen, green, (ball_x_left, ball_y_left, 5, 5))
-        ball_dx_left = math.sin(math.radians(ang_left + 90))
-        ball_dy_left = math.cos(math.radians(ang_left + 90))
+        ball_dx_left = math.cos(math.radians(ang_left))
+        ball_dy_left = -math.sin(math.radians(ang_left))
         count_balls_left = 0
 
     # Move p2
     if keys[pygame.K_UP] and per_2:
-        xp2 += math.sin(math.radians(ang_right - 90))
-        yp2 += math.cos(math.radians(ang_right - 90))
+        xp2 += math.cos(math.radians(ang_right + 180))
+        yp2 -= math.sin(math.radians(ang_right + 180))
 
     elif keys[pygame.K_LEFT]:
         ang_right += 1
@@ -142,14 +142,15 @@ while game_loop:
 
     # start player 2 ball
     elif keys[pygame.K_SEMICOLON] and count_balls_right >= 3:
-        ball_x_right = 25 + xp2 - 25 * math.sin(math.radians(ang_right + 90))
-        ball_y_right = 25 + yp2 - 25 * math.cos(math.radians(ang_right + 90))
+        ball_x_right = 25 + xp2 + 25 * math.cos(math.radians(ang_right + 180))
+        ball_y_right = 25 + yp2 - 25 * math.sin(math.radians(ang_right + 180))
         ball_right = pygame.draw.rect(screen, blue, (ball_x_right, ball_y_right, 5, 5))
-        ball_dx_right = math.sin(math.radians(ang_right - 90))
-        ball_dy_right = math.cos(math.radians(ang_right - 90))
+        ball_dx_right = math.cos(math.radians(ang_right + 180))
+        ball_dy_right = -math.sin(math.radians(ang_right + 180))
         count_balls_right = 0
 
     # check ball collisions with objects
+
     if not draw_object(screen, ball_left):
         ball_dy_left *= -1
         ball_x_left = ball_x_left + ball_dx_left
