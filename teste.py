@@ -1,6 +1,8 @@
 import pygame
 import math
 from draw_screen import draw_object
+from move import move_left, move_right
+from collision import collision_objects
 
 pygame.init()
 pygame.font.init()
@@ -70,13 +72,14 @@ ang_left = 0
 ang_left_death = 0
 left_death_count = 0
 
+per_1 = False
+per_2 = False
+
 ang_right = 0
 ang_right_death = 0
 right_death_count = 0
-count = 0
+
 clock = pygame.time.Clock()
-per_1 = False
-per_2 = False
 game_loop = True
 
 while game_loop:
@@ -86,43 +89,26 @@ while game_loop:
             exit()
 
     keys = pygame.key.get_pressed()
-    blue = (0, 0, 255)
+
     player1_cor = load_images(player1, ang_left, 50, 50, xp1, yp1, "player1.png")
     player2_cor = load_images(player2, ang_right, 50, 50, xp2, yp2, "player2.png")
     player2.image = pygame.transform.rotate(player2.image, 180)
 
     # players collide with objects
-    collision_1 = pygame.sprite.Sprite()
-    collision_1_cor = load_images(collision_1, ang_left, 10, 50,
-                                  xp1 + 30 * math.cos(math.radians(-ang_left)),
-                                  yp1 + 30 * math.sin(math.radians(-ang_left)), "collision_object.png")
-
-    collision_2 = pygame.sprite.Sprite()
-    collision_2_cor = load_images(collision_2, ang_right, 10, 50, xp2 - 30 * math.sin(math.radians(ang_right + 90)),
-                                  yp2 - 30 * math.cos(math.radians(ang_right + 90)), "collision_object.png")
-
-
-    if draw_object(screen, collision_1):
-        per_1 = True
-    else:
-        per_1 = False
-
-    # collision player 2 with objects
-    if draw_object(screen, collision_2):
-        per_2 = True
-    else:
-        per_2 = False
+    per_1 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2, screen)[0]
+    per_2 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2, screen)[1]
 
     # Move p1
-    if keys[pygame.K_w] and per_1:
-        xp1 += math.cos(math.radians(ang_left))
-        yp1 -= math.sin(math.radians(ang_left))
+    if move_left(keys, per_1, xp1, yp1, ang_left):
+        xp1 = move_left(keys, per_1, xp1, yp1, ang_left)[0]
+        yp1 = move_left(keys, per_1, xp1, yp1, ang_left)[1]
+        ang_left = move_left(keys, per_1, xp1, yp1, ang_left)[2]
 
-    elif keys[pygame.K_a]:
-        ang_left += 1
-
-    elif keys[pygame.K_d]:
-        ang_left += -1
+    # Move p2
+    if move_right(keys, per_2, xp2, yp2, ang_right):
+        xp2 = move_right(keys, per_2, xp2, yp2, ang_right)[0]
+        yp2 = move_right(keys, per_2, xp2, yp2, ang_right)[1]
+        ang_right = move_right(keys, per_2, xp2, yp2, ang_right)[2]
 
     # start player 1 ball
     elif keys[pygame.K_q] and count_balls_left >= 3:
@@ -132,17 +118,6 @@ while game_loop:
         ball_dx_left = math.cos(math.radians(ang_left))
         ball_dy_left = -math.sin(math.radians(ang_left))
         count_balls_left = 0
-
-    # Move p2
-    if keys[pygame.K_UP] and per_2:
-        xp2 += math.cos(math.radians(ang_right + 180))
-        yp2 -= math.sin(math.radians(ang_right + 180))
-
-    elif keys[pygame.K_LEFT]:
-        ang_right += 1
-
-    elif keys[pygame.K_RIGHT]:
-        ang_right += -1
 
     # start player 2 ball
     elif keys[pygame.K_SEMICOLON] and count_balls_right >= 3:
