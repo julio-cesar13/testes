@@ -17,11 +17,11 @@ def collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2,screen):
     collision_1 = pygame.sprite.Sprite()
     collision_1_cor = load_images(collision_1, ang_left, 10, 50,
                                   xp1 + 30 * math.cos(math.radians(-ang_left)),
-                                  yp1 + 30 * math.sin(math.radians(-ang_left)), "collision_object.png")
+                                  yp1 + 30 * math.sin(math.radians(-ang_left)), "sprites/collision_object.png")
 
     collision_2 = pygame.sprite.Sprite()
     collision_2_cor = load_images(collision_2, ang_right, 10, 50, xp2 - 30 * math.sin(math.radians(ang_right + 90)),
-                                  yp2 - 30 * math.cos(math.radians(ang_right + 90)), "collision_object.png")
+                                  yp2 - 30 * math.cos(math.radians(ang_right + 90)), "sprites/collision_object.png")
 
     if draw_object(screen, collision_1):
         per_1 = True
