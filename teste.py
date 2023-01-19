@@ -22,7 +22,7 @@ screen = pygame.display.set_mode((sc_width, sc_height))
 border = 25
 screen.fill("#9f4100")
 pygame.display.set_caption("Breakout Game")
-font = pygame.font.Font("PressStart2P.ttf", 40)
+font = pygame.font.Font("sprites/PressStart2P.ttf", 40)
 
 # Score (player 1)
 score_point_player1 = font.render("0", True, (0, 255, 0))
@@ -90,8 +90,8 @@ while game_loop:
 
     keys = pygame.key.get_pressed()
 
-    player1_cor = load_images(player1, ang_left, 50, 50, xp1, yp1, "player1.png")
-    player2_cor = load_images(player2, ang_right, 50, 50, xp2, yp2, "player2.png")
+    player1_cor = load_images(player1, ang_left, 50, 50, xp1, yp1, "sprites/player1.png")
+    player2_cor = load_images(player2, ang_right, 50, 50, xp2, yp2, "sprites/player2.png")
     player2.image = pygame.transform.rotate(player2.image, 180)
 
     # players collide with objects
