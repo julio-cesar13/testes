@@ -51,9 +51,9 @@ player1 = pygame.sprite.Sprite()
 player2 = pygame.sprite.Sprite()
 
 
-def load_images(sprite, ang, xp, yp, image):
+def load_images(sprite, ang, w, h, xp, yp, image):
     sprite.image = pygame.image.load(image)
-    sprite.image = pygame.transform.scale(sprite.image, (50, 50))
+    sprite.image = pygame.transform.scale(sprite.image, (w, h))
     sprite.image = pygame.transform.rotate(sprite.image, ang)
     cor_x = sprite.image.get_rect(center=(xp + 25, yp + 25))
     sprite.rect = cor_x
@@ -78,6 +78,7 @@ clock = pygame.time.Clock()
 per_1 = False
 per_2 = False
 game_loop = True
+
 while game_loop:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -86,24 +87,27 @@ while game_loop:
 
     keys = pygame.key.get_pressed()
     blue = (0, 0, 255)
-
-    player1_cor = load_images(player1, ang_left, xp1, yp1, "player1.png")
-    player2_cor = load_images(player2, ang_right, xp2, yp2, "player2.png")
+    player1_cor = load_images(player1, ang_left, 50, 50, xp1, yp1, "player1.png")
+    player2_cor = load_images(player2, ang_right, 50, 50, xp2, yp2, "player2.png")
     player2.image = pygame.transform.rotate(player2.image, 180)
 
-    # collision player 1 with objects
-    collision_1 = (
-        25 + xp1 + 25 * math.cos(math.radians(ang_left)), yp1 + 25 * math.sin(math.radians(ang_left)), 5,
-        50)
+    # players collide with objects
+    collision_1 = pygame.sprite.Sprite()
+    collision_1_cor = load_images(collision_1, ang_left, 10, 50,
+                                  xp1 + 30 * math.cos(math.radians(-ang_left)),
+                                  yp1 + 30 * math.sin(math.radians(-ang_left)), "collision_object.png")
+
+    collision_2 = pygame.sprite.Sprite()
+    collision_2_cor = load_images(collision_2, ang_right, 10, 50, xp2 - 30 * math.sin(math.radians(ang_right + 90)),
+                                  yp2 - 30 * math.cos(math.radians(ang_right + 90)), "collision_object.png")
+
+
     if draw_object(screen, collision_1):
         per_1 = True
     else:
         per_1 = False
 
     # collision player 2 with objects
-    collision_2 = (
-        25 + xp2 - 25 * math.sin(math.radians(ang_right + 90)), yp2 - 25 * math.cos(math.radians(ang_right + 90)), 5,
-        50)
     if draw_object(screen, collision_2):
         per_2 = True
     else:
@@ -222,6 +226,8 @@ while game_loop:
     if count_balls_left >= 3:
         ball_x_left = -100
         ball_y_left = -100
+        ball_dx_left = 0
+        ball_dy_left = 0
 
     ball_x_left = ball_x_left + ball_dx_left
     ball_y_left = ball_y_left + ball_dy_left
