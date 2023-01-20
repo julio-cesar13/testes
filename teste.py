@@ -1,11 +1,10 @@
-import pygame
-import math
+from ball import creation_ball_left, creation_ball_right, ball_death
 from draw_screen import draw_object
-from move import move_left, move_right
-from collision import collision_objects
+from move import move_left, move_right, load_images
+from collision import collision_objects, collision_ball, player_death
+from config import *
 
 pygame.init()
-pygame.font.init()
 
 # color balls
 green = (0, 255, 0)
@@ -15,19 +14,11 @@ blue = (0, 0, 255)
 score1 = 0
 score2 = 0
 
-# Screen
-sc_width = 1000
-sc_height = 750
-screen = pygame.display.set_mode((sc_width, sc_height))
-border = 25
-screen.fill("#9f4100")
-pygame.display.set_caption("Breakout Game")
-font = pygame.font.Font("sprites/PressStart2P.ttf", 40)
-
 # Score (player 1)
 score_point_player1 = font.render("0", True, (0, 255, 0))
 score_point_player1_rect = score_point_player1.get_rect()
 score_point_player1_rect.center = (sc_width / 4, 25)
+
 # Score (player 2)
 score_point_player2 = font.render("0", True, (0, 0, 255))
 score_point_player2_rect = score_point_player2.get_rect()
@@ -48,19 +39,10 @@ ball_dx_right = 0
 ball_dy_right = 0
 ball_right = pygame.draw.rect(screen, green, (ball_x_right, ball_y_right, 5, 5))
 count_balls_right = 4
+
 # Load images
 player1 = pygame.sprite.Sprite()
 player2 = pygame.sprite.Sprite()
-
-
-def load_images(sprite, ang, w, h, xp, yp, image):
-    sprite.image = pygame.image.load(image)
-    sprite.image = pygame.transform.scale(sprite.image, (w, h))
-    sprite.image = pygame.transform.rotate(sprite.image, ang)
-    cor_x = sprite.image.get_rect(center=(xp + 25, yp + 25))
-    sprite.rect = cor_x
-    return cor_x
-
 
 xp1 = 50
 yp1 = 380
@@ -95,8 +77,8 @@ while game_loop:
     player2.image = pygame.transform.rotate(player2.image, 180)
 
     # players collide with objects
-    per_1 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2, screen)[0]
-    per_2 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2, screen)[1]
+    per_1 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2)[0]
+    per_2 = collision_objects(ang_left, ang_right, xp1, xp2, yp1, yp2)[1]
 
     # Move p1
     if move_left(keys, per_1, xp1, yp1, ang_left):
@@ -111,98 +93,50 @@ while game_loop:
         ang_right = move_right(keys, per_2, xp2, yp2, ang_right)[2]
 
     # start player 1 ball
-    elif keys[pygame.K_q] and count_balls_left >= 3:
-        ball_x_left = 25 + xp1 + 25 * math.cos(math.radians(ang_left))
-        ball_y_left = 25 + yp1 - 25 * math.sin(math.radians(ang_left))
+    elif creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left):
+        ball_x_left = creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left)[0]
+        ball_y_left = creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left)[1]
+        ball_dx_left = creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left)[2]
+        ball_dy_left = creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left)[3]
+        count_balls_left = creation_ball_left(keys, count_balls_left, xp1, yp1, ang_left)[4]
         ball_left = pygame.draw.rect(screen, green, (ball_x_left, ball_y_left, 5, 5))
-        ball_dx_left = math.cos(math.radians(ang_left))
-        ball_dy_left = -math.sin(math.radians(ang_left))
-        count_balls_left = 0
 
     # start player 2 ball
-    elif keys[pygame.K_SEMICOLON] and count_balls_right >= 3:
-        ball_x_right = 25 + xp2 + 25 * math.cos(math.radians(ang_right + 180))
-        ball_y_right = 25 + yp2 - 25 * math.sin(math.radians(ang_right + 180))
+    elif creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right):
+        ball_x_right = creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right)[0]
+        ball_y_right = creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right)[1]
+        ball_dx_right = creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right)[2]
+        ball_dy_right = creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right)[3]
+        count_balls_right = creation_ball_right(keys, count_balls_right, xp2, yp2, ang_right)[4]
         ball_right = pygame.draw.rect(screen, blue, (ball_x_right, ball_y_right, 5, 5))
-        ball_dx_right = math.cos(math.radians(ang_right + 180))
-        ball_dy_right = -math.sin(math.radians(ang_right + 180))
-        count_balls_right = 0
 
     # check ball collisions with objects
-
-    if not draw_object(screen, ball_left):
-        ball_dy_left *= -1
-        ball_x_left = ball_x_left + ball_dx_left
-        ball_y_left = ball_y_left + ball_dy_left
-        ball_left = pygame.draw.rect(screen, green, (ball_x_left, ball_y_left, 5, 5))
-        if not draw_object(screen, ball_left):
-            ball_dx_left *= -1
-            count_balls_left -= 1
+    if collision_ball(ball_left, ball_x_left, ball_y_left, ball_dx_left, ball_dy_left):
         count_balls_left += 1
+        ball_dx_left = collision_ball(ball_left, ball_x_left, ball_y_left, ball_dx_left, ball_dy_left)[0]
+        ball_dy_left = collision_ball(ball_left, ball_x_left, ball_y_left, ball_dx_left, -ball_dy_left)[1]
+
+    # check ball collisions with objects
+    if collision_ball(ball_right, ball_x_right, ball_y_right, ball_dx_right, ball_dy_right):
+        count_balls_right += 1
+        ball_dx_right = collision_ball(ball_right, ball_x_right, ball_y_right, ball_dx_right, ball_dy_right, )[0]
+        ball_dy_right = collision_ball(ball_right, ball_x_right, ball_y_right, ball_dx_right, -ball_dy_right, )[1]
 
     # check ball collision with player 2
-    if ball_left.colliderect(player2):
-        score1 += 1
-        score_point_player1 = font.render(str(score1), True, (0, 255, 0))
-        count_balls_left += 3
-        ang_right_death = 10
-        right_death_count = 0
-
-    if right_death_count <= 144:
-        if right_death_count == 144:
-            xp2 = sc_width - 100
-
-            if score1 % 2 == 0 and score1 != 0:
-                yp2 = 100
-                ang_right = 0
-            elif score1 % 2 == 1 and score1 != 0:
-                yp2 = 650
-                ang_right = 0
-
-        right_death_count += 1
-        ang_right += ang_right_death
-
-    # check ball collisions with objects
-    if not draw_object(screen, ball_right):
-        ball_dy_right *= -1
-        ball_x_right = ball_x_right + ball_dx_right
-        ball_y_right = ball_y_right + ball_dy_right
-        ball_right = pygame.draw.rect(screen, blue, (ball_x_right, ball_y_right, 5, 5))
-        if not draw_object(screen, ball_right):
-            ball_dx_right *= -1
-            count_balls_right -= 1
-        count_balls_right += 1
+    if player_death(ball_left, player2, score1, count_balls_left, ang_right, sc_width - 100, yp2):
+        score1, count_balls_left, ang_right_death, right_death_count, xp2, yp2, ang_right = player_death(
+            ball_left, player2, score1, count_balls_left, ang_right, xp2, yp2)
 
     # check ball collision with player 1
-    if ball_right.colliderect(player1):
-        score2 += 1
-        score_point_player2 = font.render(str(score2), True, (0, 0, 255))
-        count_balls_right += 3
-        ang_left_death = 10
-        left_death_count = 0
+    if player_death(ball_right, player1, score2, count_balls_right, ang_left, 50, yp1):
+        score2, count_balls_right, ang_left_death, left_death_count, xp1, yp1, ang_left = player_death(
+            ball_right, player1, score2, count_balls_right, ang_left, xp1, yp1)
 
-    if left_death_count <= 144:
-        left_death_count += 1
-        ang_left += ang_left_death
+    if ball_death(count_balls_right):
+        count_balls_right, ball_x_right, ball_y_right, ball_dx_right, ball_dy_right = ball_death(count_balls_right)
 
-        if left_death_count == 144:
-            xp1 = 50
-            if score2 % 2 == 0 and score2 != 0:
-                yp1 = 100
-                ang_left = 0
-            elif score2 % 2 == 1 and score2 != 0:
-                yp1 = 650
-                ang_left = 0
-
-    if count_balls_right >= 3:
-        ball_x_right = - 100
-        ball_y_right = - 100
-
-    if count_balls_left >= 3:
-        ball_x_left = -100
-        ball_y_left = -100
-        ball_dx_left = 0
-        ball_dy_left = 0
+    if ball_death(count_balls_left):
+        count_balls_left, ball_x_left, ball_y_left, ball_dx_left, ball_dy_left = ball_death(count_balls_left)
 
     ball_x_left = ball_x_left + ball_dx_left
     ball_y_left = ball_y_left + ball_dy_left
@@ -212,6 +146,9 @@ while game_loop:
 
     screen.blit(player1.image, player1_cor)
     screen.blit(player2.image, player2_cor)
+
+    score_point_player1 = font.render(str(score1), True, (0, 255, 0))
+    score_point_player2 = font.render(str(score2), True, (0, 0, 255))
 
     screen.blit(score_point_player1, score_point_player1_rect)
     screen.blit(score_point_player2, score_point_player2_rect)
@@ -223,4 +160,4 @@ while game_loop:
 
     pygame.display.flip()
     screen.fill("#9f4100")
-    clock.tick(130)
+    clock.tick(190)
