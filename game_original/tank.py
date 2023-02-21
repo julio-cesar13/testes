@@ -32,24 +32,16 @@ class Tank:
         return self.bullets
 
     def move(self, keys, player_keys, permission):
-        if keys[player_keys[0]] and permission and (self.rect.y >= 232 or self.rect.y <= 380):
-            self.ang_mov += 0.4
-            self.coordinates[0] += math.cos(math.radians(self.ang_mov))
-            self.coordinates[1] -= math.sin(math.radians(self.ang_mov))
-            self.ang = self.ang_original
-            self.draw()
-        if keys[player_keys[1]] and permission and (self.rect.y <= 380 or self.rect.y >= 232):
-            self.ang_mov -= 0.4
-            self.coordinates[0] -= math.cos(math.radians(self.ang_mov))
-            self.coordinates[1] += math.sin(math.radians(self.ang_mov))
-            self.ang = self.ang_original
+        if keys[player_keys[0]] and permission:
+            self.coordinates[0] += math.cos(math.radians(self.ang))
+            self.coordinates[1] -= math.sin(math.radians(self.ang))
             self.draw()
 
-        elif keys[player_keys[2]]:
+        elif keys[player_keys[1]]:
             self.ang += 1
             self.draw()
 
-        elif keys[player_keys[3]]:
+        elif keys[player_keys[2]]:
             self.ang += -1
             self.draw()
 

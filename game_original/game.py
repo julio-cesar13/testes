@@ -4,7 +4,6 @@ from tank import Tank
 from config import *
 from score import Score
 from ball import Ball
-
 pygame.init()
 
 
@@ -27,8 +26,7 @@ class Game:
 
         score_1 = Score(self.score_a, 300, RED)
         score_2 = Score(self.score_b, 980, BLUE)
-        ball = Ball(625, 375, 50, 50)
-
+        ball = Ball(625, 300, 50, 50)
         while self.game_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -43,10 +41,10 @@ class Game:
             keys = pygame.key.get_pressed()
 
             # Move p1
-            self.tank_1.control(keys, [pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d], 0)
+            self.tank_1.control(keys, [pygame.K_w, pygame.K_a, pygame.K_d], 0)
             self.tank_1.draw()
             # Move p2
-            self.tank_2.control(keys, [pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT], 1)
+            self.tank_2.control(keys, [pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT], 1)
             self.tank_2.draw()
 
             # start shot
@@ -57,14 +55,17 @@ class Game:
                 if ball.detection_collision(b):
                     self.bullets.remove(b)
 
-            if ball.get_rect().colliderect(0, 277, 135, 220):
-                self.score_b += 1
-                ball.restart()
-                score_1.upload_score(self.score_b)
-            if ball.get_rect().colliderect(1165, 277, 135, 220):
+            if ball.get_rect().colliderect(20, 277, 80, 220):
                 self.score_a += 1
                 ball.restart()
-                score_2.upload_score(self.score_a)
+                score_1.upload_score(self.score_a)
+                self.bullets.clear()
+
+            if ball.get_rect().colliderect((1200, 277, 80, 220)):
+                self.score_b += 1
+                ball.restart()
+                score_2.upload_score(self.score_b)
+                self.bullets.clear()
 
             score_1.draw(screen)
             score_2.draw(screen)
