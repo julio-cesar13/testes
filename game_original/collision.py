@@ -6,7 +6,7 @@ def load_images(sprite, ang, w, h, xp, yp, image):
     sprite.image = pygame.image.load(image)
     sprite.image = pygame.transform.scale(sprite.image, (w, h))
     sprite.image = pygame.transform.rotate(sprite.image, ang)
-    sprite.rect = sprite.image.get_rect(center=(xp + 25, yp + 25))
+    sprite.rect = sprite.image.get_rect(center=(xp + 40, yp + 40))
 
 
 def detection_collision(player):
@@ -23,10 +23,9 @@ def detection_collision(player):
 def tank1_collision_objects(rect, angle):
     # players collide with objects
     collision_1 = pygame.sprite.Sprite()
-    load_images(collision_1, angle, 10, 50,
-                rect.x + 30 * math.cos(math.radians(-angle)),
-                rect.y + 30 * math.sin(math.radians(-angle)), "sprites/collision_object.png")
-
+    load_images(collision_1, angle, 10, 60,
+                rect.x + 20 * math.cos(math.radians(-angle)),
+                rect.y + 20 * math.sin(math.radians(-angle)), "sprites/collision_object.png")
     if detection_collision(collision_1):
         per_1 = True
     else:

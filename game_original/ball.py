@@ -1,4 +1,5 @@
 from config import *
+from collision import  detection_collision
 import math
 
 
@@ -13,6 +14,7 @@ class Ball:
         self.dy = 0
         self.per = False
         self.redox = [0.0, 0.0]
+        self.rect = None
 
     def detection_collision(self, bullet):
         if bullet.rect.colliderect((self.x, self.y, 50, 50)):
@@ -44,19 +46,22 @@ class Ball:
         return False
 
     def move(self):
-        if self.x <= 25 or self.x >= 1220:
-            self.dx *= -1
-            self.per = False
-
-        elif self.y <= 75 or self.y >= 680:
+        self.rect = pygame.Rect(self.x, self.y, 50, 50)
+        if not detection_collision(self.rect):
             self.dy *= -1
+            self.y = self.y + self.dy
+            rect = pygame.Rect(self.x, self.y, 50, 50)
+            if not detection_collision(rect):
+                self.dx *= -1
+                self.dy *= -1
+                self.x = self.x + self.dx
+                print(self.dx, self.dy)
             self.per = False
         else:
             self.per = True
 
         self.x += self.dx
         self.y += self.dy
-        print(self.dx, self.dy)
         self.draw()
         self.speed(self.per)
 
@@ -65,7 +70,7 @@ class Ball:
 
     def speed(self, per):
         if not per:
-            if math.fabs(self.dx) > 0.1 and math.fabs(self.dy) > 0.1:
+            if math.fabs(self.dx) > 0.1 or math.fabs(self.dy) > 0.1:
                 if self.dx > 0:
                     self.dx -= self.redox[0]
                 if self.dx < 0:

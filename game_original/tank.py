@@ -16,7 +16,7 @@ class Tank:
         self.image = pygame.image.load(image)
         self.surface = pygame.transform.scale(self.image, (self.w, self.h))
         self.rotated = pygame.transform.rotate(self.image, self.ang)
-        self.rect = self.image.get_rect(center=(self.coordinates[0] + 25, self.coordinates[1] + 25))
+        self.rect = self.image.get_rect(center=(self.coordinates[0] + self.w / 2, self.coordinates[1] + self.h / 2))
         self.bullets = 0
         self.count = 0
         self.color_bullet = color_bullet

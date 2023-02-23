@@ -1,7 +1,5 @@
 import math
 
-import pygame
-
 from config import *
 from collision import detection_collision
 
@@ -10,6 +8,7 @@ class Bullet:
     def __init__(self, xp, yp, angle, color_bullet):
         self.count = 0
         self.angle = angle
+        self.rect = None
         self.xp = 25 + xp + 25 * math.cos(math.radians(self.angle))
         self.yp = 25 + yp - 25 * math.sin(math.radians(self.angle))
         self.dx = speed_ball * math.cos(math.radians(self.angle))
@@ -21,6 +20,7 @@ class Bullet:
 
     def move(self):
         self.rect = pygame.Rect(self.xp, self.yp, 5, 5)
+
         if not detection_collision(self.rect):
             self.dy *= -1
             self.yp = self.yp + self.dy * 2

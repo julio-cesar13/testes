@@ -14,19 +14,19 @@ class Game:
         self.game_loop = True
         self.clock = pygame.time.Clock()
 
-        self.player1_rect = pygame.Rect(125, 363, 40, 40)
-        self.player2_rect = pygame.Rect(1120, 363, 40, 40)
+        self.player1_rect = pygame.Rect(125, 363, 80, 80)
+        self.player2_rect = pygame.Rect(1120, 363, 80, 80)
         self.score_a = self.score_b = 0
         self.bullets = []
-        self.tank_1 = Tank(0, 90, self.player1_rect, "sprites/player1.png", RED)
-        self.tank_2 = Tank(180, -90, self.player2_rect, "sprites/player2.png", BLUE)
+        self.tank_1 = Tank(0, 90, self.player1_rect, "sprites/nave-1.png", RED)
+        self.tank_2 = Tank(180, -90, self.player2_rect, "sprites/nave-2.png", BLUE)
 
     def run(self):
         self.clock.tick(80)
 
         score_1 = Score(self.score_a, 300, RED)
         score_2 = Score(self.score_b, 980, BLUE)
-        ball = Ball(625, 300, 50, 50)
+        ball = Ball(625, 363, 50, 50)
         while self.game_loop:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
